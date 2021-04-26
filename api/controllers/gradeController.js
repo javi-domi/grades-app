@@ -3,6 +3,8 @@ import { logger } from "../config/logger.js";
 
 const create = async (req, res) => {
   try {
+    const student = new db.gradeModel(req.body);
+    await student.save();
     res.send({ message: "Grade inserido com sucesso" });
     logger.info(`POST /grade - ${JSON.stringify()}`);
   } catch (error) {
@@ -22,8 +24,10 @@ const findAll = async (req, res) => {
     : {};
 
   try {
-    console.log("test");
+    const grade = await db.gradeModel.find(condition);
+    console.log("dentro del endpoint");
     logger.info(`GET /grade`);
+    res.send(grade);
   } catch (error) {
     res
       .status(500)
@@ -36,6 +40,8 @@ const findOne = async (req, res) => {
   const id = req.params.id;
 
   try {
+    const findOne = await db.gradeModel.findById({ _id: `${id}` });
+    res.send(findOne);
     logger.info(`GET /grade - ${id}`);
   } catch (error) {
     res.status(500).send({ message: "Erro ao buscar o Grade id: " + id });
@@ -53,6 +59,14 @@ const update = async (req, res) => {
   const id = req.params.id;
 
   try {
+    const updateStudentInfo = await db.gradeModel.findByIdAndUpdate(
+      {
+        _id: `${id}`,
+      },
+      req.body,
+      { new: true }
+    );
+    res.send(updateStudentInfo);
     logger.info(`PUT /grade - ${id} - ${JSON.stringify(req.body)}`);
   } catch (error) {
     res.status(500).send({ message: "Erro ao atualizar a Grade id: " + id });
@@ -64,6 +78,8 @@ const remove = async (req, res) => {
   const id = req.params.id;
 
   try {
+    await db.gradeModel.findByIdAndDelete({ _id: `${id}` });
+    res.send({ message: "Grade eliminado: " + id });
     logger.info(`DELETE /grade - ${id}`);
   } catch (error) {
     res
@@ -75,6 +91,8 @@ const remove = async (req, res) => {
 
 const removeAll = async (req, res) => {
   try {
+    await db.gradeModel.deleteMany({});
+    res.send({ message: "Todos os grades foram eliminados: " });
     logger.info(`DELETE /grade`);
   } catch (error) {
     res.status(500).send({ message: "Erro ao excluir todos as Grades" });
