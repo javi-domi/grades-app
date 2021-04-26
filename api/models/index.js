@@ -7,5 +7,6 @@ const db = {};
 db.mongoose = mongoose;
 db.url = process.env.MONGODB;
 db.gradeModel = gradeModel;
+db.cors_origin = process.env.CORS_ORIGIN;
 
 export { db };
